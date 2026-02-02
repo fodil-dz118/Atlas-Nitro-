@@ -97,8 +97,7 @@
             background: rgba(0,0,0,0.98); z-index: 9999;
             flex-direction: column; justify-content: center; align-items: center;
         }
-        
-        /* الصورة التي طلبتها */
+
         .discord-img { width: 100px; margin-bottom: 15px; }
     </style>
 </head>
@@ -145,15 +144,15 @@
     <div id="ad-overlay">
         <h2 style="color: var(--nitro-pink);">إعلان Atlas Nitro</h2>
         <p>انتظر حتى ينتهي العداد: <span id="ad-timer" style="font-weight: bold; font-size: 22px;">15</span></p>
-        <div style="width: 300px; height: 250px; background: #333; border: 2px dashed #555; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
-            <p style="color: #888;">[ إعلان حقيقي يظهر هنا ]</p>
+        <div style="width: 300px; height: 100px; background: #333; border: 2px dashed #555; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+            <p style="color: #888;">الإعلان يظهر في نافذة جديدة</p>
         </div>
     </div>
 
     <script>
+        // نظام التذكر التلقائي وحفظ البيانات
         let currentUserId = localStorage.getItem('last_user_id');
 
-        // وظيفة التذكر التلقائي عند فتح الموقع
         window.onload = function() {
             if (currentUserId) {
                 let savedData = localStorage.getItem('atlas_user_' + currentUserId);
@@ -205,6 +204,10 @@
         }
 
         function showAd() {
+            // رابط الإعلان الحقيقي الخاص بك من Adsterra
+            const adURL = "https://www.effectivegatecpm.com/g7v7zrki4?key=00e15d386272d1aaee15dcd17a8b3961"; 
+            window.open(adURL, '_blank');
+
             const overlay = document.getElementById('ad-overlay');
             const timerEl = document.getElementById('ad-timer');
             let timeLeft = 15;
@@ -226,7 +229,7 @@
             user.points += amount;
             localStorage.setItem('atlas_user_' + currentUserId, JSON.stringify(user));
             document.getElementById('points-count').innerText = user.points;
-            alert("تم إضافة 30 نقطة!");
+            alert("مبروك! تمت إضافة 30 نقطة.");
         }
 
         function logout() {
@@ -236,8 +239,8 @@
 
         function redeem() {
             let user = JSON.parse(localStorage.getItem('atlas_user_' + currentUserId));
-            if (user.points >= 3000) alert("سيتم التواصل معك!");
-            else alert("نقاطك غير كافية.");
+            if (user.points >= 3000) alert("سيتم مراجعة طلبك وإرسال الهدية لبريدك!");
+            else alert("نقاطك غير كافية، جمع المزيد!");
         }
     </script>
 </body>
