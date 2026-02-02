@@ -35,7 +35,6 @@
             border: 1px solid #3f4147;
         }
 
-        /* تنسيق الصورة الدائرية */
         .profile-img-container {
             width: 120px;
             height: 120px;
@@ -57,7 +56,6 @@
 
         .hidden { display: none; }
 
-        /* ستايل المدخلات */
         input {
             width: 100%;
             padding: 12px;
@@ -86,7 +84,6 @@
         .btn-nitro { background: var(--nitro-pink); color: white; }
         button:hover { opacity: 0.9; transform: scale(0.98); }
 
-        /* لوحة النقاط */
         .points-box {
             background: linear-gradient(135deg, var(--atlas-blue), var(--nitro-pink));
             padding: 20px;
@@ -95,7 +92,6 @@
         }
         .points-value { font-size: 38px; font-weight: 800; display: block; }
 
-        /* شاشة الإعلان */
         #ad-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 9999;
@@ -115,7 +111,7 @@
             <p class="subtitle">سجل دخولك عبر جوجل للبدء</p>
             
             <div id="g_id_onload"
-                 data-client_id="567061173923-gen-lang-client-0394907257.apps.googleusercontent.com"
+                 data-client_id="1035748084009-cop81ce2crdq16pfeanrtq3odgkcmm4k.apps.googleusercontent.com"
                  data-callback="onSignIn">
             </div>
             <div style="display: flex; justify-content: center;">
@@ -156,13 +152,11 @@
         let points = localStorage.getItem('atlas_pts') ? parseInt(localStorage.getItem('atlas_pts')) : 0;
         document.getElementById('points-count').innerText = points;
 
-        // 1. عند نجاح تسجيل جوجل
         function onSignIn(response) {
             document.getElementById('step-login').classList.add('hidden');
             document.getElementById('step-data').classList.remove('hidden');
         }
 
-        // 2. عند إكمال البيانات
         function finishSetup() {
             const name = document.getElementById('nameInput').value;
             const dob = document.getElementById('dobInput').value;
@@ -177,7 +171,6 @@
             document.getElementById('step-main').classList.remove('hidden');
         }
 
-        // 3. نظام الإعلانات
         function showAd() {
             const overlay = document.getElementById('ad-overlay');
             const timerEl = document.getElementById('ad-timer');
