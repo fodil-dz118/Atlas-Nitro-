@@ -97,9 +97,9 @@
             background: rgba(0,0,0,0.98); z-index: 9999;
             flex-direction: column; justify-content: center; align-items: center;
         }
-
-        /* تنسيق إضافي لصورة الديسكورد */
-        .discord-top-img { width: 100px; margin-bottom: 10px; }
+        
+        /* الصورة التي طلبتها */
+        .discord-img { width: 100px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -107,8 +107,7 @@
     <div class="app-container">
         
         <div id="step-login">
-            <img src="Discord.png" alt="Discord Logo" class="discord-top-img">
-            
+            <img src="Discord.png" alt="Discord Logo" class="discord-img">
             <h1>Atlas Nitro</h1>
             <p class="subtitle">سجل دخولك عبر جوجل للبدء</p>
             
@@ -138,7 +137,7 @@
             <button class="btn-primary" onclick="showAd()">📺 مشاهدة إعلان (+30 نقطة)</button>
             <button class="btn-nitro" onclick="redeem()">🎁 استبدال نيترو (3000 نقطة)</button>
             <p style="font-size: 11px; color: #80848e; margin-top: 15px;">يتم مراجعة جميع العمليات لضمان حقيقة المشاهدات</p>
-            <button onclick="logout()" style="background:none; color:#ed4245; border:none; font-size:12px; cursor:pointer; margin-top:10px;">تسجيل خروج</button>
+            <button onclick="logout()" style="background:transparent; color:#ff4747; border:none; margin-top:10px; cursor:pointer;">تسجيل خروج</button>
         </div>
 
     </div>
@@ -152,9 +151,19 @@
     </div>
 
     <script>
-        let currentUserId = null;
+        let currentUserId = localStorage.getItem('last_user_id');
 
-        // فك تشفير التوكن للحصول على ID المستخدم
+        // وظيفة التذكر التلقائي عند فتح الموقع
+        window.onload = function() {
+            if (currentUserId) {
+                let savedData = localStorage.getItem('atlas_user_' + currentUserId);
+                if (savedData) {
+                    let user = JSON.parse(savedData);
+                    goToMain(user.name, user.points);
+                }
+            }
+        };
+
         function parseJwt(token) {
             let base64Url = token.split('.')[1];
             let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -163,17 +172,14 @@
 
         function onSignIn(response) {
             const userData = parseJwt(response.credential);
-            currentUserId = userData.sub; // المعرف الفريد لحساب جوجل
+            currentUserId = userData.sub;
+            localStorage.setItem('last_user_id', currentUserId);
 
-            // محاولة جلب بيانات المستخدم المخزنة مسبقاً لهذا الحساب تحديداً
-            const savedData = localStorage.getItem('atlas_user_' + currentUserId);
-
+            let savedData = localStorage.getItem('atlas_user_' + currentUserId);
             if (savedData) {
-                // إذا كان مسجلاً سابقاً، ادخل مباشرة للمتجر
-                const user = JSON.parse(savedData);
-                showDashboard(user.name, user.points);
+                let user = JSON.parse(savedData);
+                goToMain(user.name, user.points);
             } else {
-                // إذا كان جديداً، اطلب الاسم والميلاد
                 document.getElementById('step-login').classList.add('hidden');
                 document.getElementById('step-data').classList.remove('hidden');
                 document.getElementById('nameInput').value = userData.name;
@@ -183,20 +189,14 @@
         function finishSetup() {
             const name = document.getElementById('nameInput').value;
             const dob = document.getElementById('dobInput').value;
+            if (name.trim() === "" || dob.trim() === "") return alert("تأكد من البيانات");
 
-            if (name.trim() === "" || dob.trim() === "") {
-                alert("يرجى تعبئة جميع الخانات");
-                return;
-            }
-
-            // إنشاء ملف المستخدم الجديد
-            const newUser = { name: name, dob: dob, points: 0 };
-            localStorage.setItem('atlas_user_' + currentUserId, JSON.stringify(newUser));
-            
-            showDashboard(name, 0);
+            let userData = { name: name, points: 0, dob: dob };
+            localStorage.setItem('atlas_user_' + currentUserId, JSON.stringify(userData));
+            goToMain(name, 0);
         }
 
-        function showDashboard(name, points) {
+        function goToMain(name, points) {
             document.getElementById('display-name').innerText = name;
             document.getElementById('points-count').innerText = points;
             document.getElementById('step-login').classList.add('hidden');
@@ -226,20 +226,18 @@
             user.points += amount;
             localStorage.setItem('atlas_user_' + currentUserId, JSON.stringify(user));
             document.getElementById('points-count').innerText = user.points;
-            alert("عمل رائع! حصلت على 30 نقطة.");
+            alert("تم إضافة 30 نقطة!");
         }
 
         function logout() {
-            location.reload(); 
+            localStorage.removeItem('last_user_id');
+            location.reload();
         }
 
         function redeem() {
             let user = JSON.parse(localStorage.getItem('atlas_user_' + currentUserId));
-            if (user.points >= 3000) {
-                alert("طلبك قيد المراجعة! سيتم إرسال كود النيترو قريباً.");
-            } else {
-                alert("رصيدك غير كافٍ. تحتاج إلى " + (3000 - user.points) + " نقطة إضافية.");
-            }
+            if (user.points >= 3000) alert("سيتم التواصل معك!");
+            else alert("نقاطك غير كافية.");
         }
     </script>
 </body>
