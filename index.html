@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Nitro - اربح نيترو ديسكورد</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --atlas-blue: #5865F2; /* لون ديسكورد */
+            --nitro-pink: #ff73fa; /* لون النيترو */
+            --dark-bg: #1e1f22;    /* خلفية ديسكورد */
+            --card-bg: #2b2d31;    /* خلفية البطاقات */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 90%;
+            max-width: 400px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid #3f4147;
+        }
+
+        /* تنسيق الصورة الدائرية */
+        .profile-img-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--atlas-blue);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+            margin: 0 auto 20px;
+            background: white;
+        }
+        .profile-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 { margin: 10px 0; font-size: 26px; }
+        .subtitle { color: #b5bac1; font-size: 14px; margin-bottom: 25px; }
+
+        .hidden { display: none; }
+
+        /* ستايل المدخلات */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #1e1f22;
+            background: #40444b;
+            color: white;
+            box-sizing: border-box;
+            text-align: center;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .btn-primary { background: var(--atlas-blue); color: white; }
+        .btn-nitro { background: var(--nitro-pink); color: white; }
+        button:hover { opacity: 0.9; transform: scale(0.98); }
+
+        /* لوحة النقاط */
+        .points-box {
+            background: linear-gradient(135deg, var(--atlas-blue), var(--nitro-pink));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .points-value { font-size: 38px; font-weight: 800; display: block; }
+
+        /* شاشة الإعلان */
+        #ad-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="step-login">
+            <div class="profile-img-container">
+                <img src="https://share.google/MLETwvEx7IwNTNucP" alt="Atlas Logo">
+            </div>
+            <h1>Atlas Nitro</h1>
+            <p class="subtitle">سجل دخولك عبر جوجل للبدء</p>
+            
+            <div id="g_id_onload"
+                 data-client_id="567061173923-gen-lang-client-0394907257.apps.googleusercontent.com"
+                 data-callback="onSignIn">
+            </div>
+            <div style="display: flex; justify-content: center;">
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue" data-size="large"></div>
+            </div>
+        </div>
+
+        <div id="step-data" class="hidden">
+            <h2>أكمل بياناتك</h2>
+            <p class="subtitle">يرجى إدخال اسمك وتاريخ ميلادك</p>
+            <input type="text" id="nameInput" placeholder="الاسم الكامل">
+            <input type="text" id="dobInput" placeholder="تاريخ الميلاد DD/MM/YYYY">
+            <button class="btn-primary" onclick="finishSetup()">دخول للتطبيق</button>
+        </div>
+
+        <div id="step-main" class="hidden">
+            <div style="text-align: right; font-size: 13px; color: #b5bac1;">مرحباً، <span id="display-name" style="color: white; font-weight: bold;"></span></div>
+            <div class="points-box">
+                <span class="points-value" id="points-count">0</span>
+                <span>نقطة Atlas</span>
+            </div>
+            <button class="btn-primary" onclick="showAd()">📺 مشاهدة إعلان (+30 نقطة)</button>
+            <button class="btn-nitro" onclick="redeem()">🎁 استبدال نيترو (3000 نقطة)</button>
+            <p style="font-size: 11px; color: #80848e; margin-top: 15px;">يتم مراجعة جميع العمليات لضمان حقيقة المشاهدات</p>
+        </div>
+
+    </div>
+
+    <div id="ad-overlay">
+        <h2 style="color: var(--nitro-pink);">إعلان Atlas Nitro</h2>
+        <p>انتظر حتى ينتهي العداد: <span id="ad-timer" style="font-weight: bold; font-size: 22px;">15</span></p>
+        <div style="width: 300px; height: 250px; background: #333; border: 2px dashed #555; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+            <p style="color: #888;">[ إعلان حقيقي يظهر هنا ]</p>
+        </div>
+    </div>
+
+    <script>
+        let points = localStorage.getItem('atlas_pts') ? parseInt(localStorage.getItem('atlas_pts')) : 0;
+        document.getElementById('points-count').innerText = points;
+
+        // 1. عند نجاح تسجيل جوجل
+        function onSignIn(response) {
+            document.getElementById('step-login').classList.add('hidden');
+            document.getElementById('step-data').classList.remove('hidden');
+        }
+
+        // 2. عند إكمال البيانات
+        function finishSetup() {
+            const name = document.getElementById('nameInput').value;
+            const dob = document.getElementById('dobInput').value;
+
+            if (name.trim() === "" || dob.trim() === "") {
+                alert("يرجى تعبئة جميع الخانات");
+                return;
+            }
+
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('step-data').classList.add('hidden');
+            document.getElementById('step-main').classList.remove('hidden');
+        }
+
+        // 3. نظام الإعلانات
+        function showAd() {
+            const overlay = document.getElementById('ad-overlay');
+            const timerEl = document.getElementById('ad-timer');
+            let timeLeft = 15;
+
+            overlay.style.display = 'flex';
+            
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    overlay.style.display = 'none';
+                    updatePoints(30);
+                    alert("عمل رائع! حصلت على 30 نقطة.");
+                }
+            }, 1000);
+        }
+
+        function updatePoints(amount) {
+            points += amount;
+            localStorage.setItem('atlas_pts', points);
+            document.getElementById('points-count').innerText = points;
+        }
+
+        function redeem() {
+            if (points >= 3000) {
+                alert("طلبك قيد المراجعة! سيتم إرسال كود النيترو إلى بريدك الإلكتروني قريباً.");
+            } else {
+                alert("رصيدك غير كافٍ. تحتاج إلى " + (3000 - points) + " نقطة إضافية.");
+            }
+        }
+    </script>
+</body>
+</html>
